@@ -1,6 +1,7 @@
 package com.temi.springboot.service.impl;
 
 import com.temi.springboot.entity.Post;
+import com.temi.springboot.exception.ResourceNotFoundException;
 import com.temi.springboot.payload.PostDto;
 import com.temi.springboot.repository.PostRepository;
 import com.temi.springboot.service.PostService;
@@ -36,6 +37,12 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        return mapToDTO(post);
     }
 
     //helper method to convert entity to dto
