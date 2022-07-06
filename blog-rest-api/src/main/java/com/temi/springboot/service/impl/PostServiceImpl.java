@@ -6,6 +6,8 @@ import com.temi.springboot.repository.PostRepository;
 import com.temi.springboot.service.PostService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -18,21 +20,38 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
         //convert DTO to entity
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Post post = mapToEntity(postDto);
 
         Post newPost = postRepository.save(post);
 
         //convert entity to DTO
 
-        PostDto postResponse = new PostDto();
-        postResponse.setId(newPost.getId());
-        postResponse.setTitle(newPost.getTitle());
-        postResponse.setDescription(newPost.getDescription());
-        postResponse.setContent(newPost.getContent());
+        PostDto postResponse =mapToDTO(newPost);
 
         return postResponse;
+    }
+
+    @Override
+    public List<PostDto> getAllPosts() {
+        return null;
+    }
+
+    //helper method to convert entity to dto
+    private PostDto mapToDTO(Post post){
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setDescription(post.getDescription());
+        post.setContent(post.getContent());
+        return postDto;
+    }
+
+    //helper method to convert dto to entity
+    private Post mapToEntity(PostDto postDto){
+        Post post = new Post();
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setContent(postDto.getContent());
+        return post;
     }
 }
