@@ -1,13 +1,14 @@
 package com.temi.springboot.service;
 
 import com.temi.springboot.payload.PostDto;
+import com.temi.springboot.payload.PostResponse;
 
 import java.util.List;
 
 public interface PostService {
     PostDto createPost(PostDto postDto);
 
-    List<PostDto> getAllPosts(int pageNo, int pageSize);
+    PostResponse getAllPosts(int pageNo, int pageSize);
 
     PostDto getPostById(Long id);
 
