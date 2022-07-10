@@ -1,6 +1,7 @@
 package com.temi.springboot.controller;
 
 import com.temi.springboot.payload.PostDto;
+import com.temi.springboot.payload.PostResponse;
 import com.temi.springboot.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class PostController {
 
     //get all posts rest api
     @GetMapping
-    public List<PostDto> getAllPosts(
+    public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
     ){
