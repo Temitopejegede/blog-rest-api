@@ -3,6 +3,7 @@ package com.temi.springboot.service.impl;
 import com.temi.springboot.entity.Post;
 import com.temi.springboot.exception.ResourceNotFoundException;
 import com.temi.springboot.payload.PostDto;
+import com.temi.springboot.payload.PostResponse;
 import com.temi.springboot.repository.PostRepository;
 import com.temi.springboot.service.PostService;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Post> posts = postRepository.findAll(pageable);
@@ -45,7 +46,17 @@ public class PostServiceImpl implements PostService {
         //get content from page object
 
         List<Post> listOfPosts = posts.getContent();
-        return listOfPosts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+        List<PostDto> content =  listOfPosts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(postResponse.getPageSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalElements(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     @Override
