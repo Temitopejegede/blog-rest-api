@@ -2,12 +2,17 @@ package com.temi.springboot.service.impl;
 
 import com.temi.springboot.entity.Comment;
 import com.temi.springboot.entity.Post;
+import com.temi.springboot.exception.BlogApiException;
 import com.temi.springboot.exception.ResourceNotFoundException;
 import com.temi.springboot.payload.CommentDto;
 import com.temi.springboot.repository.CommentRepository;
 import com.temi.springboot.repository.PostRepository;
 import com.temi.springboot.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImplementation implements CommentService {
@@ -33,6 +38,30 @@ public class CommentServiceImplementation implements CommentService {
 
 
         return mapToDTO(newComment);
+    }
+
+    @Override
+    public List<CommentDto> getCommentByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        //convert list of comments to comment dto
+        return comments.stream().map(comment -> mapToDTO(comment)).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(Long postId, Long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", postId));
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Comment", "id", commentId)
+        );
+
+        if(!comment.getPost().getId().equals(post.getId())){
+            throw new BlogApiException(HttpStatus.BAD_REQUEST, "Comment does not belong to a post");
+        }
+
+        return mapToDTO(comment);
     }
 
     private CommentDto mapToDTO (Comment comment){
