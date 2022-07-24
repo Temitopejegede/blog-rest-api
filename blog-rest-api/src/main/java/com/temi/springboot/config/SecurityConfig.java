@@ -10,12 +10,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
@@ -32,8 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
-        UserDetails temi = User.builder().username("temi").password("password").roles("USER").build();
-        UserDetails admin = User.builder().username("admin").password("admin").roles("ADMIN").build();
+        UserDetails temi = User.builder().username("temi").password(passwordEncoder()
+                .encode("password")).roles("USER").build();
+        UserDetails admin = User.builder().username("admin").password(passwordEncoder()
+                .encode("password")).roles("ADMIN").build();
         return new InMemoryUserDetailsManager(temi, admin);
 
     }
